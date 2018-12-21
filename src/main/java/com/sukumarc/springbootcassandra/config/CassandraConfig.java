@@ -1,10 +1,14 @@
 package com.sukumarc.springbootcassandra.config;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.cassandra.config.AbstractCassandraConfiguration;
-import org.springframework.data.cassandra.config.CassandraClusterFactoryBean;
 import org.springframework.data.cassandra.config.SchemaAction;
+import org.springframework.data.cassandra.core.cql.keyspace.CreateKeyspaceSpecification;
+import org.springframework.data.cassandra.core.cql.keyspace.KeyspaceOption;
 import org.springframework.data.cassandra.repository.config.EnableCassandraRepositories;
 
 @Configuration
@@ -48,15 +52,17 @@ public class CassandraConfig extends AbstractCassandraConfiguration {
 		return new String[] { basePackages };
 	}
 	
-//	@Override
-//	public CassandraClusterFactoryBean cluster() {
-//		CassandraClusterFactoryBean factoryBean = super.cluster();
-//		factoryBean.setJmxReportingEnabled(false);
-//		return factoryBean;
-//	}
-	
 	@Override
 	protected boolean getMetricsEnabled() {
 		return false;
 	}
+	
+	 @Override
+	  protected List<CreateKeyspaceSpecification> getKeyspaceCreations() {
+	    return Arrays.asList(CreateKeyspaceSpecification.createKeyspace(keySpace)
+	                .ifNotExists()
+	                .with(KeyspaceOption.DURABLE_WRITES, true)
+	                .withSimpleReplication());
+	  }
+
 }
