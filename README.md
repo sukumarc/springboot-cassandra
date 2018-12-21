@@ -1,0 +1,1 @@
+This project helps us to set up spring boot with cassandra (ORM)
